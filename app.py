@@ -1,18 +1,26 @@
 
 import requests
+import os
+from dotenv import load_dotenv
 from flask import Flask, render_template, request, url_for, flash, redirect
+import logging
 
-
-URL = "https://discover.search.hereapi.com/v1/discover"
-api_key = 'W5vIt4K4WgyT4AbocD_1HR6GNJU_TrvV5y1mC9Zw9EY'
+load_dotenv()
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = "2f05980503d030045bf70f6da1a49e78168b6dcf65275637"
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+
+URL = "https://discover.search.hereapi.com/v1/discover"
+api_key = os.environ.get('API_KEY')
+
+# Set log level
+logging.getLogger().setLevel(logging.DEBUG)
 
 
 @app.route('/', methods=('GET', 'POST'))
 def map_func():
     if request.method == 'POST':
+        logging.info('REQUEST: POST -> /')
         try:
             latitude = request.form['latitude']
             longitude = request.form['longitude']
@@ -38,6 +46,7 @@ def map_func():
                 # sending get request and saving the response as response object
                 r = requests.get(url=URL, params=PARAMS)
                 if r.status_code == 200:
+                    logging.info('::: REQUEST STATUS 200 :::')
                     data = r.json()
                     return render_template('map.html',
                                            latitude=latitude,
@@ -47,6 +56,14 @@ def map_func():
                                            )
                 else:
                     data = r.json()
+                    logging.error(
+                        '::: ERROR REQUEST STATUS NOT 200 :::')
+                    logging.error('ERROR >>> {}'.format({
+                        'title': data['title'],
+                        'cause': data['cause'],
+                        'action': data['action'],
+                        'status': data['status']
+                    }))
                     flash(
                         {
                             'title': data['title'],
@@ -56,9 +73,12 @@ def map_func():
                         }
                     )
         except Exception as e:
+            logging.error('::: ERROR DURING POST PROCESSING :::')
+            logging.error('ERROR >>> {}'.format(e))
             flash(str(e))
+    logging.info('REQUEST: GET -> /')
     return render_template('index.html')
 
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(host='0.0.0.0', port=3550, debug=False)
