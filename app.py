@@ -1,4 +1,5 @@
 
+from whitenoise import WhiteNoise
 import requests
 import os
 from dotenv import load_dotenv
@@ -9,6 +10,7 @@ load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+app.wsgi_app = WhiteNoise(app.wsgi_app, root="static/")
 
 URL = "https://discover.search.hereapi.com/v1/discover"
 api_key = os.environ.get('API_KEY')
