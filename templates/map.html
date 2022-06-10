@@ -43,16 +43,16 @@
         // Instantiate the default behavior, providing the mapEvents object:
         var behavior = new H.mapevents.Behavior(mapEvents);
 
-        let url = window.location.href + '{{ url_for('static', filename = 'img / map - marker - svgrepo - com.svg') }}';
+        let url = window.location.href + '{{ url_for('static', filename = 'img/map-marker-svgrepo-com.svg') }}';
         // Add the first marker
-        var bearsIcon = new H.map.Icon(url),
+        var bearsIcon = new H.map.Icon( url),
             myLocation_marker = new H.map.Marker({ lat: lat, lng: lng }, { icon: bearsIcon });
         map.addObject(myLocation_marker);
 
         var markers = [];
         {% for i in data %}
-        markers[{{ i['position']['lat'] }}] = new H.map.Marker({ lat: {{ i['position']['lat'] }}, lng: {{ i['position']['lng'] }} });
-        map.addObject(markers[{{ i['position']['lat'] }}]);
+            markers[{{i['position']['lat']}}] = new H.map.Marker({ lat: {{ i['position']['lat'] }}, lng: {{ i['position']['lng'] }} });
+            map.addObject(markers[{{i['position']['lat']}}]);
         {% endfor %}
 
         // Create the default UI:
@@ -71,17 +71,21 @@
         });
 
         {% for i in data %}
-        markers[{{ i['position']['lat'] }}].addEventListener('tap', function (evt) {
+            markers[{{i['position']['lat']}}].addEventListener('tap', function (evt) {
 
-            // Create an info bubble object at a specific geographic location:
-            var bubble = new H.ui.InfoBubble({ lng: {{ i['position']['lng'] }}, lat: {{ i['position']['lat'] }} }, {
-            content: ''
-        });
-        bubble.setContent('<div style="height: 130px; overflow: auto; width: 270px;"><h3><b>Title:</b> {{i['title']}}</h3><p><b>Address:</b> {{i['address']['label']}}</p><p><b>Distance:</b> {{i['distance']}}</p></div>');
-        // Add info bubble to the UI:
-        ui.addBubble(bubble);
-        });
+                // Create an info bubble object at a specific geographic location:
+                var bubble = new H.ui.InfoBubble({ lng: {{ i['position']['lng'] }}, lat: {{ i['position']['lat'] }} }, {
+                    content: ''
+                });
+                bubble.setContent('<div style="height: 130px; overflow: auto; width: 270px;"><h3><b>Title:</b> {{i['title']}}</h3><p><b>Address:</b> {{i['address']['label']}}</p><p><b>Distance:</b> {{i['distance']}}</p></div>');
+                // Add info bubble to the UI:
+                ui.addBubble(bubble);
+            });
         {% endfor %}
+
+
+
+
     </script>
 </body>
 

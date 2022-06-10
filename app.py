@@ -10,7 +10,7 @@ load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
-app.wsgi_app = WhiteNoise(app.wsgi_app, root="static/")
+# app.wsgi_app = WhiteNoise(app.wsgi_app, root="static/")
 
 URL = "https://discover.search.hereapi.com/v1/discover"
 api_key = os.environ.get('API_KEY')
@@ -83,4 +83,4 @@ def map_func():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    app.run(host='0.0.0.0', port=3055, debug=False)
